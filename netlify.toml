@@ -1,10 +1,6 @@
 [build]
-  # No build command needed for static site
-  # publish = "public" is the default
-  
-  # Environment variables (these will be set in Netlify dashboard)
-  [build.environment]
-    NODE_ENV = "production"
+  # Publish directory (where your built files are)
+  publish = "public"
 
 # Redirects for SPA (Single Page Application)
 [[redirects]]

@@ -1,9 +1,6 @@
 [build]
-  # Build command to generate Firebase config
-  command = "node build.js"
-  
-  # Publish directory (where your built files are)
-  publish = "public"
+  # No build command needed for static site
+  # publish = "public" is the default
   
   # Environment variables (these will be set in Netlify dashboard)
   [build.environment]

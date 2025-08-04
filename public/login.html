@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - DigiMashinani</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #0f172a;
+      color: #f8fafc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .login-container {
+      background-color: #1e293b;
+      padding: 2rem;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 1rem;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .password-wrapper {
+      position: relative;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      cursor: pointer;
+      color: #ccc;
+    }
+
+    button {
+      width: 100%;
+      background-color: #3b82f6;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .error {
+      color: #ef4444;
+      margin-top: 0.5rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>DigiMashinani Login</h2>
+    <form id="loginForm">
+      <label for="email">Email:</label>
+      <input type="email" id="email" required />
+
+      <label for="password">Password:</label>
+      <div class="password-wrapper">
+        <input type="password" id="password" required />
+        <span class="toggle-password" onclick="togglePassword()">👁️</span>
+      </div>
+
+      <button type="submit">Login</button>
+      <div class="error" id="errorMessage"></div>
+    </form>
+    
+    <!-- Status Messages -->
+    <div id="statusMessage" class="mt-3 p-2 rounded" style="display: none;"></div>
+  </div>
+
+  <!-- Enhanced Firebase Auth with Domain Handling -->
+  <script type="module" src="js/firebase-config.js"></script>
+  <script type="module">
+    const loginForm = document.getElementById("loginForm");
+    const errorMessage = document.getElementById("errorMessage");
+    const statusMessage = document.getElementById("statusMessage");
+
+    // ✅ Check for existing session on page load
+    function checkExistingSession() {
+      const session = sessionStorage.getItem('dashboard_session');
+      const timestamp = sessionStorage.getItem('auth_timestamp');
+      
+      if (session && timestamp) {
+        const sessionAge = Date.now() - parseInt(timestamp);
+        const SESSION_DURATION = 8 * 60 * 60 * 1000; // 8 hours
+        
+        if (sessionAge < SESSION_DURATION) {
+          console.log('✅ Valid session found, redirecting to dashboard');
+          window.location.href = 'dash3.html';
+          return;
+        } else {
+          console.log('❌ Session expired, clearing...');
+          sessionStorage.removeItem('dashboard_session');
+          sessionStorage.removeItem('auth_timestamp');
+        }
+      }
+    }
+
+    // Check session immediately when page loads
+    checkExistingSession();
+
+    // Check for URL parameters for status messages
+    const urlParams = new URLSearchParams(window.location.search);
+    const message = urlParams.get('message');
+    
+    if (message) {
+      statusMessage.style.display = 'block';
+      switch (message) {
+        case 'timeout':
+          statusMessage.className = 'mt-3 p-2 rounded bg-warning text-dark';
+          statusMessage.textContent = 'Authentication timed out. Please try again.';
+          break;
+        case 'expired':
+          statusMessage.className = 'mt-3 p-2 rounded bg-info text-white';
+          statusMessage.textContent = 'Session expired. Please login again.';
+          break;
+        case 'inactivity':
+          statusMessage.className = 'mt-3 p-2 rounded bg-warning text-dark';
+          statusMessage.textContent = 'Logged out due to inactivity.';
+          break;
+        case 'logged_out':
+          statusMessage.className = 'mt-3 p-2 rounded bg-info text-white';
+          statusMessage.textContent = 'You have been logged out.';
+          break;
+        case 'auth_error':
+          statusMessage.className = 'mt-3 p-2 rounded bg-danger text-white';
+          statusMessage.textContent = 'Authentication error. Please try again.';
+          break;
+        default:
+          statusMessage.style.display = 'none';
+      }
+    }
+
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      // Clear previous messages
+      errorMessage.textContent = '';
+      statusMessage.style.display = 'none';
+
+      try {
+        // Show loading state immediately
+        statusMessage.style.display = 'block';
+        statusMessage.className = 'mt-3 p-2 rounded bg-info text-white';
+        statusMessage.textContent = 'Logging in...';
+        
+        // Wait for Firebase config to be available (max 2 seconds)
+        let attempts = 0;
+        const maxAttempts = 20; // 2 seconds with 100ms intervals
+        
+        const waitForFirebase = () => {
+          if (window.firebaseConfig && window.firebaseConfig.enhancedSignIn) {
+            // Firebase config is ready, proceed with login
+            window.firebaseConfig.enhancedSignIn(email, password).then(result => {
+              if (result.success) {
+                const modeText = result.mode === 'local' ? ' (Local Development Mode)' : '';
+                statusMessage.textContent = `Login successful!${modeText} Redirecting...`;
+                statusMessage.className = 'mt-3 p-2 rounded bg-success text-white';
+                
+                // Redirect immediately (no delay)
+                window.location.href = "dash3.html";
+              } else {
+                throw new Error(result.error);
+              }
+            }).catch(error => {
+              errorMessage.textContent = "Login failed: " + error.message;
+              statusMessage.style.display = 'none';
+            });
+          } else if (attempts < maxAttempts) {
+            attempts++;
+            setTimeout(waitForFirebase, 100);
+          } else {
+            // Fallback: use local development mode
+            console.log('Firebase config not available, using local mode');
+            const mockUser = {
+              uid: 'local-dev-' + Date.now(),
+              email: email,
+              displayName: email.split('@')[0]
+            };
+            
+            sessionStorage.setItem('dashboard_session', JSON.stringify(mockUser));
+            sessionStorage.setItem('auth_timestamp', Date.now().toString());
+            sessionStorage.setItem('local_dev_mode', 'true');
+            
+            statusMessage.textContent = 'Login successful! (Local Mode) Redirecting...';
+            statusMessage.className = 'mt-3 p-2 rounded bg-success text-white';
+            
+            // Redirect immediately
+            window.location.href = "dash3.html";
+          }
+        };
+        
+        waitForFirebase();
+        
+      } catch (error) {
+        errorMessage.textContent = "Login failed: " + error.message;
+        statusMessage.style.display = 'none';
+      }
+    });
+
+    window.togglePassword = function () {
+      const passwordInput = document.getElementById("password");
+      const isPassword = passwordInput.type === "password";
+      passwordInput.type = isPassword ? "text" : "password";
+    };
+  </script>
+</body>
+</html> 

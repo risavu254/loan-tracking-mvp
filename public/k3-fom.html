@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"/>
+  <meta name="description" content="DigiMashinani Loan Application System"/>
+  <title>DigiMashinani Loan Application</title>
+  <link href="css/loan-form.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+  
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+</head>
+<body data-theme="dark">
+  <!-- Search Section -->
+  <div id="idSearchSection" class="mt-3 mx-auto px-2" style="max-width: 700px;">
+    <div class="alert alert-info mb-3 py-2">Enter Client ID to search before continuing:</div>
+    <div class="row g-2 align-items-end">
+      <div class="col-12 col-md-6">
+        <label for="clientIDCheck" class="form-label mb-1">Client ID Number</label>
+        <input type="text" class="form-control" id="clientIDCheck" placeholder="Enter ID to search">
+      </div>
+      <div class="col-6 col-md-3">
+        <button class="btn btn-success w-100 py-2" id="searchClientBtn">Search</button>
+      </div>
+      <div class="col-6 col-md-3">
+        <button class="btn btn-secondary w-100 py-2" id="newApplicationBtn">New Application</button>
+      </div>
+    </div>
+    <div class="text-center mt-2">
+      <button class="btn btn-outline-light py-1 px-3" id="backToDashboardBtn" onclick="goBackToDashboard()">← Back to Dashboard</button>
+    </div>
+  </div>
+
+  <!-- Main Form Container -->
+  <div class="container mt-3 p-2 p-md-3 rounded" id="loanFormContainer" style="background: var(--card-bg); box-shadow: 0 8px 24px var(--shadow-color);">
+  <form id="loanForm" novalidate>
+    <button type="button" class="btn btn-sm btn-outline-danger float-end py-1 px-2 mb-2" id="closeFormBtn" onclick="closeLoanForm()">
+      <i class="bi bi-x-lg"></i> Close
+    </button>
+
+        <!-- Client Info Section -->
+        <div id="sectionClient" class="form-section active">
+          <h2 class="fs-5 fs-md-4 mb-3 d-flex align-items-center">
+            <span class="badge bg-primary me-2">1</span> Client Information
+          </h2>
+          <div class="row g-2">
+            <div class="col-12 col-md-3">
+              <label class="form-label">Gender</label>
+              <select name="clientGender" class="form-select">
+                <option>Male</option>
+                <option>Female</option>
+              </select>
+            </div>
+            <div class="col-12 col-md-3">
+              <label class="form-label">DOB</label>
+              <input type="date" name="clientDOB" class="form-control"/>
+            </div>
+            <div class="col-12 col-md-3">
+              <label class="form-label">First Name</label>
+              <input name="clientFname" class="form-control"/>
+            </div>
+            <div class="col-12 col-md-3">
+              <label class="form-label">Second Name</label>
+              <input name="clientSname" class="form-control"/>
+            </div>
+            <div class="col-12 col-md-3">
+              <label class="form-label">Surname</label>
+              <input name="clientLname" class="form-control"/>
+            </div>
+            <div class="col-12 col-md-3">
+              <label class="form-label">Marital</label>
+              <select name="clientMarital" class="form-select">
+                <option>Single</option>
+                <option>Married</option>
+                <option>Divorced</option>
+              </select>
+            </div>
+            <div class="col-12 col-md-3">
+              <label class="form-label">Residential</label>
+              <select name="clientResidence" class="form-select">
+                <option>Own</option>
+                <option>Rent</option>
+                <option>Family</option>
+              </select>
+            </div>
+            <div class="col-12 col-md-3">
+              <label class="form-label">Mobile No</label>
+              <input name="clientPhone" class="form-control" type="tel"/>
+            </div>
+            <div class="col-12 col-md-3">
+              <label class="form-label">Alternative Phone</label>
+              <input name="clientPhoneAlt" class="form-control"/>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label">ID Number</label>
+              <input name="clientID" class="form-control"/>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label">KRA PIN</label>
+              <input name="clientKRA" class="form-control"/>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label">Email</label>
+              <input name="clientEmail" class="form-control"/>
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label">Residential Address</label>
+              <input name="clientAddress" class="form-control"/>
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label">Estate / Landmark</label>
+              <input name="clientLandmark" class="form-control"/>
+            </div>
+          </div>
+
+          <!-- Referees Section -->
+          <div class="row g-2 mt-3">
+            <div class="col-12">
+              <h4 class="fs-5 d-flex align-items-center">
+                <span class="badge bg-info me-2">✍</span> Referees <small class="text-muted ms-1">(3 slots)</small>
+              </h4>
+            </div>
+
+            <div id="refereesSection" class="col-12">
+              <div class="referee-wrapper mb-2 p-2">
+                <div class="row g-2 align-items-end">
+                  <div class="col-12 col-md-4">
+                    <input type="text" name="refereeName[]" class="form-control" placeholder="Full Name" required/>
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <input type="text" name="refereeRelation[]" class="form-control" placeholder="Relationship" required/>
+                  </div>
+                  <div class="col-12 col-md-3">
+                    <input type="tel" name="refereePhone[]" class="form-control" placeholder="Phone Number" required/>
+                  </div>
+                  <div class="col-12 col-md-1 d-flex align-items-end">
+                    <button type="button" class="btn btn-danger btn-sm w-100 py-1 px-0" onclick="removeReferee(this)">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <button type="button" class="btn btn-outline-primary btn-sm mt-1 w-100" onclick="addReferee()">
+                <i class="bi bi-plus-circle"></i> Add Referee
+              </button>
+            </div>
+          </div>
+
+          <!-- Business Info -->
+          <div class="row g-2 mt-3">
+            <div class="col-12">
+              <h4 class="fs-5 d-flex align-items-center">
+                <span class="badge bg-success me-2">🏢</span> Business Information
+              </h4>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label">Business Name</label>
+              <input name="bizName" class="form-control" placeholder="Official name"/>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label">Business Type</label>
+              <input name="bizType" class="form-control" placeholder="e.g. Retail, Service"/>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label">Year Established</label>
+              <input name="bizYear" class="form-control" type="number" placeholder="YYYY"/>
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label">Business Location</label>
+              <input name="bizLocation" class="form-control" placeholder="Physical address"/>
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label">Landmark</label>
+              <input name="bizLandmark" class="form-control" placeholder="Nearby notable place"/>
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label">Average Daily Sales (KES)</label>
+              <input name="bizSales" class="form-control" type="number" placeholder="Estimated amount"/>
+            </div>
+            <div class="col-12 col-md-3">
+              <label class="form-label">Licensed?</label>
+              <select name="bizLicense" class="form-select">
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Client Securities -->
+          <div class="row g-2 mt-3">
+            <div class="col-12">
+              <h4 class="fs-5 d-flex align-items-center mb-2">
+                <span class="badge bg-warning text-dark me-2">🛡️</span> Client Securities
+              </h4>
+              <div class="table-responsive">
+                <table class="table table-sm table-bordered align-middle">
+                  <thead class="bg-dark">
+                    <tr>
+                      <th width="25%">Item Name</th>
+                      <th width="40%">Description</th>
+                      <th width="25%">Value (KES)</th>
+                      <th width="10%">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="clientSecuritiesBody">
+                    <tr>
+                      <td><input name="clientSecItem[]" class="form-control form-control-sm" placeholder="e.g. Title Deed" required></td>
+                      <td><input name="clientSecDesc[]" class="form-control form-control-sm" placeholder="Detailed description" required></td>
+                      <td><input name="clientSecValue[]" class="form-control form-control-sm" type="number" placeholder="Estimated value" required></td>
+                      <td class="text-center">
+                        <button type="button" class="btn btn-danger btn-sm py-0 px-1" onclick="removeRow(this)">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <button type="button" class="btn btn-outline-success btn-sm mt-1 w-100" onclick="addClientSecurity()">
+                <i class="bi bi-plus-circle"></i> Add Security Item
+              </button>
+            </div>
+          </div>
+
+          <!-- Media Capture Section -->
+          <div class="row g-2 mt-3">
+            <div class="col-12 col-md-4">
+              <label class="form-label">Passport Photo</label>
+              <div class="d-flex flex-column gap-1">
+                <button type="button" class="btn btn-outline-secondary d-flex justify-content-center align-items-center py-2" onclick="openPhotoModal('client')">
+                  <i class="bi bi-camera-fill me-2"></i>Upload Photo
+                </button>
+                <input type="file" id="clientCameraInput" accept="image/*" capture="environment" style="display:none;">
+                <input type="file" id="clientGalleryInput" accept="image/*" style="display:none;">
+                <div id="clientPreviewContainer" class="text-center mt-1" style="display:none;">
+                  <img id="clientPreview" class="img-thumbnail" style="max-width:120px; max-height:120px;"/>
+                  <button type="button" class="btn btn-sm btn-outline-danger mt-1" onclick="clearPhoto('client')">
+                    <i class="bi bi-trash"></i> Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-12 col-md-4">
+              <label class="form-label">Location</label>
+              <button type="button" class="btn btn-outline-success w-100 py-2" onclick="pinLocation('client')">
+                <i class="bi bi-geo-alt-fill me-2"></i> Capture Location
+              </button>
+            </div>
+            
+            <div class="col-12 col-md-4">
+              <label class="form-label">Signature</label>
+              <div class="border rounded p-1" style="background-color: white;">
+                <canvas id="signatureCanvasClient" height="100" style="width:100%; touch-action:none;"></canvas>
+              </div>
+              <div class="d-flex justify-content-between mt-1">
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="clearSignature('client'); initClientSignature();">
+                  <i class="bi bi-eraser"></i> Clear
+                </button>
+                <small class="text-muted align-self-center">Sign above</small>
+              </div>
+              <input type="hidden" name="clientSig" id="clientSigData"/>
+            </div>
+          </div>
+
+          <!-- Navigation -->
+          <div class="d-flex justify-content-end mt-3">
+            <button type="button" class="btn btn-primary px-4 py-2" onclick="navTo('sectionClient','sectionGuarantor')">
+              Next <i class="bi bi-arrow-right ms-1"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Guarantor Section -->
+        <div id="sectionGuarantor" class="form-section">
+          <h2 class="fs-5 fs-md-4 mb-3 d-flex align-items-center">
+            <span class="badge bg-primary me-2">2</span> Guarantor Information
+          </h2>
+          <div class="row g-2">
+            <div class="col-12 col-md-4">
+              <label class="form-label">First Name</label>
+              <input name="guarFname" class="form-control" placeholder="Guarantor's first name"/>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label">Last Name</label>
+              <input name="guarLname" class="form-control" placeholder="Guarantor's surname"/>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label">ID Number</label>
+              <input name="guarID" class="form-control" placeholder="National ID"/>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label">Phone Number</label>
+              <input name="guarPhone" class="form-control" type="tel" placeholder="Active phone"/>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label">Relationship</label>
+              <input name="guarRelation" class="form-control" placeholder="How related to client"/>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label">Residential Address</label>
+              <input name="guarAddress" class="form-control" placeholder="Physical address"/>
+            </div>
+          </div>
+
+          <!-- Guarantor Securities -->
+          <div class="row g-2 mt-3">
+            <div class="col-12">
+              <h4 class="fs-5 d-flex align-items-center mb-2">
+                <span class="badge bg-warning text-dark me-2">🛡️</span> Guarantor Securities
+              </h4>
+              <div class="table-responsive">
+                <table class="table table-sm table-bordered align-middle">
+                  <thead class="bg-dark">
+                    <tr>
+                      <th width="25%">Item</th>
+                      <th width="40%">Description</th>
+                      <th width="25%">Value (KES)</th>
+                      <th width="10%">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="guarantorSecuritiesBody">
+                    <tr>
+                      <td><input name="guarSecItem[]" class="form-control form-control-sm" placeholder="e.g. Car Logbook" required/></td>
+                      <td><input name="guarSecDesc[]" class="form-control form-control-sm" placeholder="Detailed description" required/></td>
+                      <td><input name="guarSecValue[]" class="form-control form-control-sm" type="number" placeholder="Estimated value" required/></td>
+                      <td class="text-center">
+                        <button type="button" class="btn btn-danger btn-sm py-0 px-1" onclick="removeRow(this)">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <button type="button" class="btn btn-outline-primary btn-sm mt-1 w-100" onclick="addGuarantorSecurity()">
+                <i class="bi bi-plus-circle"></i> Add Security
+              </button>
+            </div>
+          </div>
+
+          <!-- Guarantor Media Section -->
+          <div class="row g-2 mt-3">
+            <div class="col-12 col-md-4">
+              <label class="form-label">Passport Photo</label>
+              <div class="d-flex flex-column gap-1">
+                <button type="button" class="btn btn-outline-secondary d-flex justify-content-center align-items-center py-2" onclick="openPhotoModal('guar')">
+                  <i class="bi bi-camera-fill me-2"></i>Upload Photo
+                </button>
+                <div id="guarPreviewContainer" class="text-center mt-1" style="display:none;">
+                  <img id="guarPreview" class="img-thumbnail" style="max-width:120px; max-height:120px;"/>
+                  <button type="button" class="btn btn-sm btn-outline-danger mt-1" onclick="clearPhoto('guar')">
+                    <i class="bi bi-trash"></i> Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-12 col-md-4">
+              <label class="form-label">Location</label>
+              <button type="button" class="btn btn-outline-success w-100 py-2" onclick="pinLocation('guar')">
+                <i class="bi bi-geo-alt-fill me-2"></i> Capture Location
+              </button>
+            </div>
+            
+            <div class="col-12 col-md-4">
+              <label class="form-label">Signature</label>
+              <div class="border rounded p-1" style="background-color: white;">
+                <canvas id="signatureCanvasGuar" height="100" style="width:100%; touch-action:none;"></canvas>
+              </div>
+              <div class="d-flex justify-content-between mt-1">
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="clearSignature('guar')">
+                  <i class="bi bi-eraser"></i> Clear
+                </button>
+                <small class="text-muted align-self-center">Sign above</small>
+              </div>
+              <input type="hidden" name="guarSigData" id="guarSigData"/>
+            </div>
+          </div>
+
+          <!-- Navigation Buttons -->
+          <div class="d-flex justify-content-between mt-3">
+            <button type="button" class="btn btn-secondary px-4 py-2" onclick="navTo('sectionGuarantor','sectionClient')">
+              <i class="bi bi-arrow-left me-1"></i> Back
+            </button>
+            <button type="button" class="btn btn-primary px-4 py-2" onclick="navTo('sectionGuarantor','sectionLoan')">
+              Next <i class="bi bi-arrow-right ms-1"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Loan Information Section -->
+        <div id="sectionLoan" class="form-section">
+          <h2 class="fs-5 fs-md-4 mb-3 d-flex align-items-center">
+            <span class="badge bg-primary me-2">3</span> Loan Information
+          </h2>
+          
+          <!-- Basic Loan Details -->
+          <div class="row g-2">
+            <div class="col-12">
+              <h4 class="fs-5 d-flex align-items-center mb-2">
+                <span class="badge bg-info me-2">💰</span> Loan Details
+              </h4>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label">Loan Amount (KES)</label>
+              <input name="loanAmount" class="form-control" type="number" placeholder="Enter loan amount" required/>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label">Loan Purpose</label>
+              <select name="loanPurpose" class="form-select" required>
+                <option value="">Select purpose</option>
+                <option value="Business">Business</option>
+                <option value="Education">Education</option>
+                <option value="Medical">Medical</option>
+                <option value="Home Improvement">Home Improvement</option>
+                <option value="Vehicle">Vehicle</option>
+                <option value="Agriculture">Agriculture</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label">Loan Term (Months)</label>
+              <select name="loanTerm" class="form-select" required>
+                <option value="">Select term</option>
+                <option value="3">3 Months</option>
+                <option value="6">6 Months</option>
+                <option value="12">12 Months</option>
+                <option value="18">18 Months</option>
+                <option value="24">24 Months</option>
+                <option value="36">36 Months</option>
+              </select>
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label">Interest Rate (%)</label>
+              <input name="interestRate" class="form-control" type="number" step="0.1" placeholder="e.g. 15.5" required/>
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label">Processing Fee (KES)</label>
+              <input name="processingFee" class="form-control" type="number" placeholder="Processing fee amount"/>
+            </div>
+          </div>
+
+          <!-- Repayment Schedule -->
+          <div class="row g-2 mt-3">
+            <div class="col-12">
+              <h4 class="fs-5 d-flex align-items-center mb-2">
+                <span class="badge bg-success me-2">📅</span> Repayment Schedule
+              </h4>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label">Repayment Frequency</label>
+              <select name="repaymentFrequency" class="form-select" required>
+                <option value="">Select frequency</option>
+                <option value="Weekly">Weekly</option>
+                <option value="Bi-weekly">Bi-weekly</option>
+                <option value="Monthly">Monthly</option>
+                <option value="Quarterly">Quarterly</option>
+              </select>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label">First Payment Date</label>
+              <input name="firstPaymentDate" class="form-control" type="date" required/>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label">Monthly Payment (KES)</label>
+              <input name="monthlyPayment" class="form-control" type="number" placeholder="Calculated amount" readonly/>
+            </div>
+          </div>
+
+          <!-- Collateral & Security -->
+          <div class="row g-2 mt-3">
+            <div class="col-12">
+              <h4 class="fs-5 d-flex align-items-center mb-2">
+                <span class="badge bg-warning text-dark me-2">🛡️</span> Collateral & Security
+              </h4>
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label">Collateral Type</label>
+              <select name="collateralType" class="form-select">
+                <option value="">Select collateral</option>
+                <option value="Title Deed">Title Deed</option>
+                <option value="Logbook">Vehicle Logbook</option>
+                <option value="Insurance Policy">Insurance Policy</option>
+                <option value="Fixed Deposit">Fixed Deposit</option>
+                <option value="Guarantor">Guarantor</option>
+                <option value="None">No Collateral</option>
+              </select>
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label">Collateral Value (KES)</label>
+              <input name="collateralValue" class="form-control" type="number" placeholder="Estimated value"/>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Collateral Description</label>
+              <textarea name="collateralDescription" class="form-control" rows="2" placeholder="Detailed description of collateral"></textarea>
+            </div>
+          </div>
+
+          <!-- Loan Terms & Conditions -->
+          <div class="row g-2 mt-3">
+            <div class="col-12">
+              <h4 class="fs-5 d-flex align-items-center mb-2">
+                <span class="badge bg-secondary me-2">📋</span> Terms & Conditions
+              </h4>
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label">Late Payment Penalty (%)</label>
+              <input name="latePaymentPenalty" class="form-control" type="number" step="0.1" placeholder="e.g. 5.0"/>
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label">Early Repayment Fee (%)</label>
+              <input name="earlyRepaymentFee" class="form-control" type="number" step="0.1" placeholder="e.g. 2.0"/>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Special Terms</label>
+              <textarea name="specialTerms" class="form-control" rows="3" placeholder="Any special terms or conditions for this loan"></textarea>
+            </div>
+          </div>
+
+          <!-- Loan Officer Details -->
+          <div class="row g-2 mt-3">
+            <div class="col-12">
+              <h4 class="fs-5 d-flex align-items-center mb-2">
+                <span class="badge bg-primary me-2">👤</span> Loan Officer Details
+              </h4>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label">Loan Officer Name</label>
+              <input name="loanOfficerName" class="form-control" placeholder="Full name"/>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label">Officer ID</label>
+              <input name="loanOfficerID" class="form-control" placeholder="Officer ID number"/>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label">Branch</label>
+              <input name="branch" class="form-control" placeholder="Branch name"/>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Recommendation Notes</label>
+              <textarea name="recommendationNotes" class="form-control" rows="2" placeholder="Loan officer's recommendation and notes"></textarea>
+            </div>
+          </div>
+
+          <!-- Navigation Buttons -->
+          <div class="d-flex justify-content-between mt-4">
+            <button type="button" class="btn btn-secondary px-4 py-2" onclick="navTo('sectionLoan','sectionGuarantor')">
+              <i class="bi bi-arrow-left me-1"></i> Back
+            </button>
+            <button type="button" class="btn btn-primary px-4 py-2" onclick="navTo('sectionLoan','sectionRO')">
+              Next <i class="bi bi-arrow-right ms-1"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- RO & Witness Section -->
+        <div id="sectionRO" class="form-section">
+          <h2 class="fs-5 fs-md-4 mb-3 d-flex align-items-center">
+            <span class="badge bg-primary me-2">4</span> RO & Witness Signatures
+          </h2>
+          
+          <div class="row g-3">
+            <div class="col-12 col-md-6">
+              <div class="d-flex flex-column">
+                <label class="form-label mb-1">RO In-Charge Signature</label>
+                <div class="border rounded p-1" style="background-color: white;">
+                  <canvas id="signatureCanvasRO" height="120" style="width:100%; touch-action:none;"></canvas>
+                </div>
+                <div class="d-flex justify-content-between mt-1">
+                  <button type="button" class="btn btn-sm btn-outline-secondary" onclick="clearSignature('ro')">
+                    <i class="bi bi-eraser"></i> Clear
+                  </button>
+                  <small class="text-muted align-self-center">Sign in the box above</small>
+                </div>
+                <input type="hidden" name="roSig" id="roSigData"/>
+              </div>
+            </div>
+            
+            <div class="col-12 col-md-6">
+              <div class="d-flex flex-column">
+                <label class="form-label mb-1">RO Witness Signature</label>
+                <div class="border rounded p-1" style="background-color: white;">
+                  <canvas id="signatureCanvasWitness" height="120" style="width:100%; touch-action:none;"></canvas>
+                </div>
+                <div class="d-flex justify-content-between mt-1">
+                  <button type="button" class="btn btn-sm btn-outline-secondary" onclick="clearSignature('witness')">
+                    <i class="bi bi-eraser"></i> Clear
+                  </button>
+                  <small class="text-muted align-self-center">Sign in the box above</small>
+                </div>
+                <input type="hidden" name="roWitnessSig" id="roWitnessSigData"/>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between mt-4">
+            <button type="button" class="btn btn-secondary px-4 py-2" onclick="navTo('sectionRO','sectionLoan')">
+              <i class="bi bi-arrow-left me-1"></i> Back
+            </button>
+            <button type="button" class="btn btn-primary px-4 py-2" onclick="navTo('sectionRO','sectionFinal')">
+              Next <i class="bi bi-arrow-right ms-1"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Final Section -->
+        <div id="sectionFinal" class="form-section">
+          <h2 class="fs-5 fs-md-4 mb-3 d-flex align-items-center">
+            <span class="badge bg-primary me-2">5</span> Manager Approval
+          </h2>
+          
+          <div class="row g-3">
+            <div class="col-12 col-md-6">
+              <label class="form-label">Manager Approval</label>
+              <select name="managerApproval" class="form-select">
+                <option value="Pending">Pending Review</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label">Approval Notes</label>
+              <textarea name="managerNotes" class="form-control" rows="2" placeholder="Optional comments"></textarea>
+            </div>
+          </div>
+
+          <div class="d-flex flex-wrap gap-2 mt-4">
+            <button type="button" class="btn btn-secondary flex-grow-1 py-2" onclick="navTo('sectionFinal','sectionRO')">
+              <i class="bi bi-arrow-left me-1"></i> Back
+            </button>
+            <button type="button" class="btn btn-success flex-grow-1 py-2" onclick="submitLoanForm()">
+              <i class="bi bi-check-circle me-1"></i> Submit
+            </button>
+            <button type="button" class="btn btn-warning flex-grow-1 py-2" onclick="saveDraft()">
+              <i class="bi bi-save me-1"></i> Save Draft
+            </button>
+            <button type="button" class="btn btn-info text-white flex-grow-1 py-2" onclick="downloadPDF()">
+              <i class="bi bi-file-earmark-pdf me-1"></i> PDF
+            </button>
+            <button type="button" class="btn btn-dark flex-grow-1 py-2" onclick="window.print()">
+              <i class="bi bi-printer me-1"></i> Print
+            </button>
+          </div>
+        </div>
+
+        <!-- Photo Modal -->
+        <div class="modal fade" id="photoModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header bg-dark">
+                <h5 class="modal-title">Select Photo Source</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body p-0">
+                <button class="btn btn-light w-100 py-3 border-bottom rounded-0" onclick="triggerPhotoOption('camera')">
+                  <i class="bi bi-camera me-2"></i> Take New Photo
+                </button>
+                <button class="btn btn-light w-100 py-3" onclick="triggerPhotoOption('gallery')">
+                  <i class="bi bi-image me-2"></i> Choose from Gallery
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module" src="js/k3-fom.js"></script>
+</body>
+</html>

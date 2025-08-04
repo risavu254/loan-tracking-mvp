@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth Debug - DigiMashinani</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            padding: 20px;
+        }
+        .debug-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #1e293b;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background-color: #065f46; }
+        .error { background-color: #7f1d1d; }
+        .info { background-color: #1e40af; }
+        button {
+            background-color: #3b82f6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>🔍 Authentication Debug</h1>
+        
+        <div id="status" class="status info">
+            Checking authentication status...
+        </div>
+        
+        <div id="debug-info"></div>
+        
+        <div style="margin-top: 20px;">
+            <button onclick="testAuth()">Test Authentication</button>
+            <button onclick="clearSession()">Clear Session</button>
+            <button onclick="goToLogin()">Go to Login</button>
+            <button onclick="goToDashboard()">Go to Dashboard</button>
+        </div>
+    </div>
+
+    <script type="module" src="js/firebase-config.js"></script>
+    <script type="module" src="js/auth-middleware.js"></script>
+    
+    <script>
+        const statusDiv = document.getElementById('status');
+        const debugInfo = document.getElementById('debug-info');
+        
+        // Test authentication
+        async function testAuth() {
+            statusDiv.className = 'status info';
+            statusDiv.textContent = 'Testing authentication...';
+            
+            try {
+                if (window.firebaseConfig) {
+                    const result = await window.firebaseConfig.enhancedAuthStateCheck();
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = `Auth Check Result: ${JSON.stringify(result, null, 2)}`;
+                } else {
+                    statusDiv.className = 'status error';
+                    statusDiv.textContent = 'Firebase config not loaded';
+                }
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = `Error: ${error.message}`;
+            }
+        }
+        
+        // Clear session
+        function clearSession() {
+            sessionStorage.clear();
+            statusDiv.className = 'status info';
+            statusDiv.textContent = 'Session cleared';
+        }
+        
+        // Go to login
+        function goToLogin() {
+            window.location.href = 'login.html';
+        }
+        
+        // Go to dashboard
+        function goToDashboard() {
+            window.location.href = 'dash3.html';
+        }
+        
+        // Initialize debug info
+        function updateDebugInfo() {
+            const session = sessionStorage.getItem('dashboard_session');
+            const timestamp = sessionStorage.getItem('auth_timestamp');
+            const localDev = sessionStorage.getItem('local_dev_mode');
+            
+            debugInfo.innerHTML = `
+                <h3>Debug Information:</h3>
+                <p><strong>Session:</strong> ${session ? 'Present' : 'None'}</p>
+                <p><strong>Timestamp:</strong> ${timestamp || 'None'}</p>
+                <p><strong>Local Dev Mode:</strong> ${localDev || 'false'}</p>
+                <p><strong>Current URL:</strong> ${window.location.href}</p>
+                <p><strong>Firebase Config:</strong> ${window.firebaseConfig ? 'Loaded' : 'Not loaded'}</p>
+                <p><strong>Auth Middleware:</strong> ${window.authMiddleware ? 'Loaded' : 'Not loaded'}</p>
+            `;
+        }
+        
+        // Update debug info every 2 seconds
+        setInterval(updateDebugInfo, 2000);
+        updateDebugInfo();
+        
+        // Initial status check
+        setTimeout(() => {
+            if (window.firebaseConfig) {
+                window.firebaseConfig.enhancedAuthStateCheck().then(result => {
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = `Initial Auth Check: ${result.authenticated ? 'Authenticated' : 'Not authenticated'}`;
+                }).catch(error => {
+                    statusDiv.className = 'status error';
+                    statusDiv.textContent = `Auth Error: ${error.message}`;
+                });
+            } else {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = 'Firebase config not available';
+            }
+        }, 1000);
+    </script>
+</body>
+</html> 

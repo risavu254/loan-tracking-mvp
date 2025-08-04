@@ -1,0 +1,10 @@
+# Handle client-side routing
+/*    /index.html   200
+
+# Redirect old URLs if any
+/dash3.html    /index.html   301
+/k3-fom.html   /index.html   301
+
+# Security redirects
+/.env    /404.html   404
+/config.js    /404.html   404 

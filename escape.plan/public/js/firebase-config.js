@@ -9,7 +9,7 @@ import {
 
 const firebaseConfig = {
   apiKey: "AIzaSyDktcea0NIBU_-6pAlV57eCokFsdDkyOEE",
-  authDomain: "loan-tracking-system-7c607.firebaseapp.com",
+  authDomain: "loan-tracking-mvp.netlify.app",
   projectId: "loan-tracking-system-7c607",
   storageBucket: "loan-tracking-system-7c607.appspot.com",
   messagingSenderId: "985241134995",
@@ -193,4 +193,5 @@ window.firebaseConfig = {
 
 // ✅ Log domain status
 console.log('Current domain:', window.location.hostname);
+
 console.log('Domain authorized:', checkDomainAuthorization()); 

@@ -57,26 +57,36 @@ if (currentDomain === 'loan-tracking-mvp.netlify.app') {
 // ✅ Enhanced Sign-In Function (Missing Function Fix)
 window.FIREBASE_CONFIG.enhancedSignIn = async function(email, password) {
   try {
+    // Check domain authorization first
+    const currentDomain = window.location.hostname;
+    console.log("🔍 Attempting authentication for domain:", currentDomain);
+    console.log("🔧 Firebase Auth Domain:", window.FIREBASE_AUTH_DOMAIN);
+    
     // Import Firebase Auth functions
-    const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
+    const { initializeApp, getApp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
     const { getAuth, signInWithEmailAndPassword } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
     
     // Initialize Firebase if not already done
     let app;
     try {
       app = initializeApp(window.FIREBASE_CONFIG);
+      console.log("✅ Firebase initialized successfully");
     } catch (error) {
       if (error.code !== 'app/duplicate-app') {
+        console.error("❌ Firebase initialization error:", error);
         throw error;
       }
       // App already initialized, get existing app
       app = getApp();
+      console.log("✅ Using existing Firebase app");
     }
     
     const auth = getAuth(app);
+    console.log("🔐 Auth object created, attempting sign in...");
     
     // Attempt sign in
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    console.log("✅ Authentication successful");
     
     return {
       success: true,
@@ -85,7 +95,13 @@ window.FIREBASE_CONFIG.enhancedSignIn = async function(email, password) {
     };
     
   } catch (error) {
-    console.error("Authentication error:", error);
+    console.error("❌ Authentication error:", error);
+    console.error("🔍 Error details:", {
+      code: error.code,
+      message: error.message,
+      domain: window.location.hostname,
+      authDomain: window.FIREBASE_AUTH_DOMAIN
+    });
     
     // Handle specific error types
     let errorMessage = "Authentication failed";
@@ -105,6 +121,12 @@ window.FIREBASE_CONFIG.enhancedSignIn = async function(email, password) {
         break;
       case 'auth/network-request-failed':
         errorMessage = "Network error. Please check your connection.";
+        break;
+      case 'auth/unauthorized-domain':
+        errorMessage = "Domain not authorized. Please add 'loan-tracking-mvp.netlify.app' to Firebase Console authorized domains.";
+        console.error("🚨 DOMAIN AUTHORIZATION ERROR:");
+        console.error("📝 Go to Firebase Console > Authentication > Settings > Authorized Domains");
+        console.error("📝 Add: loan-tracking-mvp.netlify.app");
         break;
       default:
         errorMessage = error.message || "Authentication failed";

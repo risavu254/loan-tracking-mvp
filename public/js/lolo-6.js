@@ -11,27 +11,52 @@ import {
   updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// ✅ Secure Firebase Configuration
-// Note: In production, these should be set via environment variables during build
-const firebaseConfig = {
+// ✅ Secure Firebase Configuration with Domain Validation
+// Uses the centralized configuration from firebase-config.js
+const firebaseConfig = window.FIREBASE_CONFIG || {
   apiKey: window.FIREBASE_API_KEY || "YOUR_API_KEY_HERE",
-  authDomain: window.FIREBASE_AUTH_DOMAIN || "loan-tracking-system-7c607.firebaseapp.com",
+  authDomain: window.FIREBASE_AUTH_DOMAIN || "loan-tracking-mvp.netlify.app",
   projectId: window.FIREBASE_PROJECT_ID || "loan-tracking-system-7c607",
   storageBucket: window.FIREBASE_STORAGE_BUCKET || "loan-tracking-system-7c607.appspot.com",
   messagingSenderId: window.FIREBASE_MESSAGING_SENDER_ID || "985241134995",
   appId: window.FIREBASE_APP_ID || "1:985241134995:web:9e9625498f3ab39edfea66"
 };
 
-// Initialize Firebase with error handling
+// Domain validation check
+const currentDomain = window.location.hostname;
+const isProductionDomain = currentDomain === 'loan-tracking-mvp.netlify.app';
+console.log("🔐 Firebase initialization for domain:", currentDomain);
+console.log("🚀 Production domain:", isProductionDomain);
+
+// Initialize Firebase with enhanced error handling
 let app, db;
 try {
   app = initializeApp(firebaseConfig);
   db = getFirestore(app);
   window.db = db;
-  console.log("Firebase initialized successfully");
+  console.log("✅ Firebase initialized successfully");
+  console.log("🔧 Auth Domain:", firebaseConfig.authDomain);
+  console.log("🌐 Current Domain:", currentDomain);
+  
+  // Additional validation for production domain
+  if (isProductionDomain) {
+    console.log("🚀 Production environment detected - all features enabled");
+  }
 } catch (error) {
-  console.error("Firebase initialization error:", error);
-  showToast("Failed to initialize database", "danger");
+  console.error("❌ Firebase initialization error:", error);
+  console.error("🔍 Error details:", {
+    domain: currentDomain,
+    authDomain: firebaseConfig.authDomain,
+    projectId: firebaseConfig.projectId,
+    errorCode: error.code,
+    errorMessage: error.message
+  });
+  
+  // Show user-friendly error message
+  const errorMessage = isProductionDomain 
+    ? "Database connection failed. Please check your internet connection."
+    : "Development database connection failed.";
+  showToast(errorMessage, "danger");
 }
 
 // ✅ Enhanced Helper Functions

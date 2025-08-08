@@ -15,7 +15,7 @@ import {
 // Uses the centralized configuration from firebase-config.js
 const firebaseConfig = window.FIREBASE_CONFIG || {
   apiKey: window.FIREBASE_API_KEY || "YOUR_API_KEY_HERE",
-  authDomain: window.FIREBASE_AUTH_DOMAIN || "loan-tracking-mvp.netlify.app",
+  authDomain: window.FIREBASE_AUTH_DOMAIN || "loan-tracking-system-7c607.firebaseapp.com",
   projectId: window.FIREBASE_PROJECT_ID || "loan-tracking-system-7c607",
   storageBucket: window.FIREBASE_STORAGE_BUCKET || "loan-tracking-system-7c607.appspot.com",
   messagingSenderId: window.FIREBASE_MESSAGING_SENDER_ID || "985241134995",

@@ -4,7 +4,7 @@
 // CACHE BUST: Updated for Netlify deployment
 
 window.FIREBASE_API_KEY = "AIzaSyDktcea0NIBU_-6pAlV57eCokFsdDkyOEE";
-window.FIREBASE_AUTH_DOMAIN = "loan-tracking-system-7c607.firebaseapp.com";
+window.FIREBASE_AUTH_DOMAIN = "loan-tracking-mvp.netlify.app";
 window.FIREBASE_PROJECT_ID = "loan-tracking-system-7c607";
 window.FIREBASE_STORAGE_BUCKET = "loan-tracking-system-7c607.appspot.com";
 window.FIREBASE_MESSAGING_SENDER_ID = "985241134995";

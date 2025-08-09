@@ -47,6 +47,9 @@ window.FIREBASE_CONFIG = {
   appId: window.FIREBASE_APP_ID
 };
 
+// Provide lowercase alias for legacy code paths
+window.firebaseConfig = window.FIREBASE_CONFIG;
+
 // Domain-specific configuration
 if (currentDomain === 'loan-tracking-mvp.netlify.app') {
   console.log("🚀 Production domain detected - using optimized configuration");
@@ -187,5 +190,34 @@ window.FIREBASE_CONFIG.enhancedAuthStateCheck = async function() {
       user: null,
       mode: 'error'
     };
+  }
+};
+
+// ✅ Enhanced Logout Function
+window.FIREBASE_CONFIG.enhancedLogout = async function() {
+  try {
+    const { initializeApp, getApp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
+    const { getAuth, signOut } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
+
+    let app;
+    try {
+      app = initializeApp(window.FIREBASE_CONFIG);
+    } catch (error) {
+      app = getApp();
+    }
+
+    const auth = getAuth(app);
+    await signOut(auth);
+
+    // Clear any local session storage the app uses
+    try {
+      sessionStorage.removeItem('dashboard_session');
+      sessionStorage.removeItem('auth_timestamp');
+    } catch (_) {}
+
+    return { success: true };
+  } catch (error) {
+    console.error('Enhanced logout error:', error);
+    return { success: false, error: error.message };
   }
 };

@@ -11,14 +11,7 @@ import {
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 // ✅ Firebase Configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyDktcea0NIBU_-6pAlV57eCokFsdDkyOEE",
-  authDomain: "loan-tracking-system-7c607.firebaseapp.com",
-  projectId: "loan-tracking-system-7c607",
-  storageBucket: "loan-tracking-system-7c607.appspot.com",
-  messagingSenderId: "985241134995",
-  appId: "1:985241134995:web:9e9625498f3ab39edfea66"
-};
+const firebaseConfig = window.FIREBASE_CONFIG;
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);

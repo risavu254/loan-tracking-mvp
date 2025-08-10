@@ -32,7 +32,7 @@ async function fastProtectRoute() {
   }
   
   // No valid session - redirect to login
-  window.location.href = 'kamkoba-login.html';
+  window.location.href = 'login.html';
   return false;
 }
 

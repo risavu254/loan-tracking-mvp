@@ -5,6 +5,9 @@
 /dash3.html    /index.html   301
 /k3-fom.html   /index.html   301
 
+# Redirect kamkoba-login to main login
+/kamkoba-login.html    /login.html   301
+
 # Security redirects
 /.env    /404.html   404
 /config.js    /404.html   404 

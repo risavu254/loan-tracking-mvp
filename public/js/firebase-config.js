@@ -8,12 +8,16 @@ const AUTHORIZED_DOMAINS = [
   'localhost',
   '127.0.0.1',
   'loan-tracking-system-7c607.firebaseapp.com',
-  'loan-tracking-system-7c607.web.app'
+  'loan-tracking-system-7c607.web.app',
+  'loan-tracking-mvp.netlify.app'
 ];
+
+// Netlify preview URL pattern
+const NETLIFY_PREVIEW_PATTERN = /^[a-f0-9]{12}--[a-zA-Z0-9-]+\.netlify\.app$/;
 
 // Current domain validation
 const currentDomain = window.location.hostname;
-const isAuthorizedDomain = AUTHORIZED_DOMAINS.includes(currentDomain);
+const isAuthorizedDomain = AUTHORIZED_DOMAINS.includes(currentDomain) || NETLIFY_PREVIEW_PATTERN.test(currentDomain);
 
 // Firebase configuration with domain validation
 window.FIREBASE_API_KEY = "AIzaSyDktcea0NIBU_-6pAlV57eCokFsdDkyOEE";
@@ -35,6 +39,7 @@ if (!isAuthorizedDomain) {
   console.warn("⚠️ WARNING: Current domain is not in authorized list");
   console.warn("📝 Add this domain to Firebase Console > Authentication > Settings > Authorized Domains");
   console.warn("🔧 Required: Add 'loan-tracking-mvp.netlify.app' to Firebase authorized domains");
+  console.warn("🔧 For Netlify preview URLs, add the specific preview domain or use wildcard pattern");
 }
 
 // Export configuration for use in other modules
@@ -55,6 +60,10 @@ if (currentDomain === 'loan-tracking-mvp.netlify.app') {
   console.log("🚀 Production domain detected - using optimized configuration");
   console.log("⚠️ IMPORTANT: Ensure 'loan-tracking-mvp.netlify.app' is added to Firebase Console authorized domains");
   // Add any production-specific configurations here
+} else if (NETLIFY_PREVIEW_PATTERN.test(currentDomain)) {
+  console.log("🔧 Netlify preview domain detected:", currentDomain);
+  console.log("⚠️ IMPORTANT: Add this preview domain to Firebase Console authorized domains");
+  console.log("📝 Or add wildcard pattern: *.netlify.app");
 }
 
 // ✅ Enhanced Sign-In Function (Missing Function Fix)
@@ -126,10 +135,18 @@ window.FIREBASE_CONFIG.enhancedSignIn = async function(email, password) {
         errorMessage = "Network error. Please check your connection.";
         break;
       case 'auth/unauthorized-domain':
-        errorMessage = "Domain not authorized. Please add 'loan-tracking-mvp.netlify.app' to Firebase Console authorized domains.";
-        console.error("🚨 DOMAIN AUTHORIZATION ERROR:");
-        console.error("📝 Go to Firebase Console > Authentication > Settings > Authorized Domains");
-        console.error("📝 Add: loan-tracking-mvp.netlify.app");
+        if (NETLIFY_PREVIEW_PATTERN.test(currentDomain)) {
+          errorMessage = `Domain not authorized. Please add '${currentDomain}' to Firebase Console authorized domains.`;
+          console.error("🚨 NETLIFY PREVIEW DOMAIN AUTHORIZATION ERROR:");
+          console.error("📝 Go to Firebase Console > Authentication > Settings > Authorized Domains");
+          console.error("📝 Add: " + currentDomain);
+          console.error("📝 Or add wildcard pattern: *.netlify.app");
+        } else {
+          errorMessage = "Domain not authorized. Please add 'loan-tracking-mvp.netlify.app' to Firebase Console authorized domains.";
+          console.error("🚨 DOMAIN AUTHORIZATION ERROR:");
+          console.error("📝 Go to Firebase Console > Authentication > Settings > Authorized Domains");
+          console.error("📝 Add: loan-tracking-mvp.netlify.app");
+        }
         break;
       default:
         errorMessage = error.message || "Authentication failed";

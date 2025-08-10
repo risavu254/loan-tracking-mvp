@@ -34,7 +34,7 @@ function checkAuthentication() {
     const timeout = setTimeout(() => {
       console.warn('Authentication check timed out, redirecting to login');
       clearSession();
-      window.location.href = 'kamkoba-login.html?message=timeout';
+      window.location.href = 'login.html?message=timeout';
       resolve(false);
     }, 1500); // 1.5 second timeout
 
@@ -188,12 +188,12 @@ function protectRoute() {
       }
 
       // If no valid session, redirect to login immediately (no checking)
-      window.location.href = 'kamkoba-login.html';
+      window.location.href = 'login.html';
       resolve(false);
     } catch (error) {
       console.error('Route protection error:', error);
       // Fallback: redirect to login
-      window.location.href = 'kamkoba-login.html?message=error';
+      window.location.href = 'login.html?message=error';
       resolve(false);
     }
   });
@@ -209,7 +209,7 @@ function setupInactivityLogout() {
     inactivityTimer = setTimeout(() => {
       if (isAuthenticated) {
         logoutUser().then(() => {
-          window.location.href = 'kamkoba-login.html?message=inactivity';
+          window.location.href = 'login.html?message=inactivity';
         });
       }
     }, INACTIVITY_TIMEOUT);
@@ -238,7 +238,7 @@ function setupSessionRefresh() {
         } else {
           // Session expired, logout
           await logoutUser();
-          window.location.href = 'kamkoba-login.html?message=expired';
+          window.location.href = 'login.html?message=expired';
         }
       }
     }
@@ -289,7 +289,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           logoutBtn.onclick = async () => {
             const result = await logoutUser();
             if (result.success) {
-              window.location.href = 'kamkoba-login.html';
+              window.location.href = 'login.html';
             }
           };
           headerButtons.appendChild(logoutBtn);
@@ -298,7 +298,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (error) {
       console.error('Authentication initialization error:', error);
       // Fallback: redirect to login
-      window.location.href = 'kamkoba-login.html?message=init_error';
+      window.location.href = 'login.html?message=init_error';
     }
   }
 });
@@ -312,8 +312,8 @@ if (!isLocalDev) {
     if (!user && isAuthenticated) {
       // User was logged out (e.g., from another tab)
       clearSession();
-      if (!window.location.pathname.includes('kamkoba-login.html')) {
-        window.location.href = 'kamkoba-login.html?message=logged_out';
+      if (!window.location.pathname.includes('login.html')) {
+        window.location.href = 'login.html?message=logged_out';
       }
     }
   });

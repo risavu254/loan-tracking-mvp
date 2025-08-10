@@ -8,8 +8,7 @@ const AUTHORIZED_DOMAINS = [
   'localhost',
   '127.0.0.1',
   'loan-tracking-system-7c607.firebaseapp.com',
-  'loan-tracking-system-7c607.web.app',
-  'loan-tracking-mvp.netlify.app'
+  'loan-tracking-system-7c607.web.app'
 ];
 
 // Netlify preview URL pattern

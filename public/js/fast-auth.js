@@ -21,21 +21,6 @@ function quickSessionCheck() {
   return { valid: false };
 }
 
-// ✅ Fast Route Protection
-async function fastProtectRoute() {
-  // Quick session check first
-  const sessionCheck = quickSessionCheck();
-  
-  if (sessionCheck.valid) {
-    // Valid session - proceed immediately
-    return true;
-  }
-  
-  // No valid session - redirect to login
-  window.location.href = 'login.html';
-  return false;
-}
-
 // ✅ Optimized Dashboard Initialization
 function initializeDashboard() {
   // Hide loading screen immediately
@@ -54,7 +39,6 @@ function initializeDashboard() {
 // ✅ Export for use in dashboard files
 window.fastAuth = {
   quickSessionCheck,
-  fastProtectRoute,
   initializeDashboard
 };
 
@@ -62,7 +46,4 @@ window.fastAuth = {
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize dashboard immediately
   initializeDashboard();
-  
-  // Quick authentication check
-  fastProtectRoute();
 }); 

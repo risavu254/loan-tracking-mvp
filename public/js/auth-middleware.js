@@ -30,13 +30,13 @@ const SESSION_DURATION = 8 * 60 * 60 * 1000; // 8 hours in milliseconds
 // ✅ Fast Authentication Check Function
 function checkAuthentication() {
   return new Promise((resolve) => {
-    // Very short timeout - 1.5 seconds max
+    // Increased timeout - 5 seconds for better reliability
     const timeout = setTimeout(() => {
       console.warn('Authentication check timed out, redirecting to login');
       clearSession();
       window.location.href = 'login.html?message=timeout';
       resolve(false);
-    }, 1500); // 1.5 second timeout
+    }, 5000); // 5 second timeout
 
     // First, check session storage immediately
     const session = sessionStorage.getItem(SESSION_KEY);
@@ -165,35 +165,58 @@ async function logoutUser() {
 // ✅ Fast Route Protection
 function protectRoute() {
   return new Promise(async (resolve) => {
+    console.log('🛡️ protectRoute called - starting authentication check');
+    
     try {
       // Hide loading screen immediately - no authentication checking needed
       const loadingScreen = document.getElementById('loadingScreen');
       if (loadingScreen) {
+        console.log('📱 Hiding loading screen in protectRoute');
         loadingScreen.style.display = 'none';
+      } else {
+        console.log('⚠️ Loading screen not found in protectRoute');
       }
 
       // Quick session check first
       const session = sessionStorage.getItem(SESSION_KEY);
       const timestamp = sessionStorage.getItem(AUTH_TIMESTAMP);
       
+      console.log('🔍 Checking session:', { session: !!session, timestamp: !!timestamp });
+      
       if (session && timestamp) {
         const sessionAge = Date.now() - parseInt(timestamp);
+        console.log('⏰ Session age:', sessionAge, 'ms');
+        
         if (sessionAge < SESSION_DURATION) {
           // Valid session - proceed immediately
-          currentUser = JSON.parse(session);
-          isAuthenticated = true;
-          resolve(true);
-          return;
+          try {
+            currentUser = JSON.parse(session);
+            isAuthenticated = true;
+            console.log('✅ Valid session found, user:', currentUser.email);
+            console.log('✅ Authentication successful - resolving true');
+            resolve(true);
+            return;
+          } catch (error) {
+            console.error('❌ Error parsing session:', error);
+          }
+        } else {
+          console.log('⏰ Session expired, clearing...');
+          clearSession();
         }
+      } else {
+        console.log('❌ No session found');
       }
 
-      // If no valid session, redirect to login immediately (no checking)
+      // If no valid session, redirect to login immediately
+      console.log('🔄 No valid session - redirecting to login...');
       window.location.href = 'login.html';
+      console.log('🔄 Redirect initiated');
       resolve(false);
     } catch (error) {
-      console.error('Route protection error:', error);
+      console.error('❌ Route protection error:', error);
       // Fallback: redirect to login
       window.location.href = 'login.html?message=error';
+      console.log('🔄 Fallback redirect initiated');
       resolve(false);
     }
   });
@@ -258,22 +281,37 @@ window.authMiddleware = {
   clearSession
 };
 
+// ✅ Make logoutUser globally available for HTML onclick
+window.logoutUser = logoutUser;
+
 // ✅ Initialize authentication when DOM is ready
 document.addEventListener('DOMContentLoaded', async () => {
+  console.log('🚀 DOM Content Loaded - Starting authentication initialization');
+  
   // Hide loading screen immediately
   const loadingScreen = document.getElementById('loadingScreen');
   if (loadingScreen) {
+    console.log('📱 Loading screen found, hiding immediately');
     loadingScreen.style.display = 'none';
+  } else {
+    console.log('⚠️ Loading screen not found');
   }
 
   // Check if we're on a protected page
   const currentPage = window.location.pathname.split('/').pop();
   const protectedPages = ['dash3.html'];
   
+  console.log('🔍 Current page:', currentPage);
+  console.log('🛡️ Protected pages:', protectedPages);
+  
   if (protectedPages.includes(currentPage)) {
+    console.log('🛡️ Page is protected, checking authentication...');
     try {
       const isProtected = await protectRoute();
+      console.log('✅ Route protection result:', isProtected);
+      
       if (isProtected) {
+        console.log('✅ Authentication successful, setting up dashboard...');
         // Setup inactivity logout and session refresh
         setupInactivityLogout();
         setupSessionRefresh();
@@ -294,12 +332,18 @@ document.addEventListener('DOMContentLoaded', async () => {
           };
           headerButtons.appendChild(logoutBtn);
         }
+        
+        console.log('✅ Dashboard setup complete');
+      } else {
+        console.log('❌ Authentication failed, redirecting to login');
       }
     } catch (error) {
-      console.error('Authentication initialization error:', error);
+      console.error('❌ Authentication initialization error:', error);
       // Fallback: redirect to login
       window.location.href = 'login.html?message=init_error';
     }
+  } else {
+    console.log('ℹ️ Page is not protected, no authentication needed');
   }
 });
 

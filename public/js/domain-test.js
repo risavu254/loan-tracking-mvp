@@ -6,7 +6,7 @@ console.log("🔍 Domain Authorization Test Starting...");
 // Test function to verify domain authorization
 function testDomainAuthorization() {
   const currentDomain = window.location.hostname;
-  const expectedDomain = 'loan-tracking-mvp.netlify.app';
+  const expectedDomain = 'loan-tracking-system-7c607.web.app';
   const isProduction = currentDomain === expectedDomain;
   
   console.log("🌐 Current Domain:", currentDomain);

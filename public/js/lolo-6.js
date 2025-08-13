@@ -24,7 +24,7 @@ const firebaseConfig = window.FIREBASE_CONFIG || {
 
 // Domain validation check
 const currentDomain = window.location.hostname;
-const isProductionDomain = currentDomain === 'loan-tracking-mvp.netlify.app';
+const isProductionDomain = currentDomain === 'loan-tracking-system-7c607.web.app' || currentDomain === 'loan-tracking-system-7c607.firebaseapp.com';
 console.log("🔐 Firebase initialization for domain:", currentDomain);
 console.log("🚀 Production domain:", isProductionDomain);
 
@@ -42,6 +42,15 @@ try {
   if (isProductionDomain) {
     console.log("🚀 Production environment detected - all features enabled");
   }
+  
+  // Hide loading screen after successful initialization
+  setTimeout(() => {
+    const loadingScreen = document.getElementById('loadingScreen');
+    if (loadingScreen) {
+      loadingScreen.style.display = 'none';
+    }
+  }, 500);
+  
 } catch (error) {
   console.error("❌ Firebase initialization error:", error);
   console.error("🔍 Error details:", {
@@ -57,6 +66,14 @@ try {
     ? "Database connection failed. Please check your internet connection."
     : "Development database connection failed.";
   showToast(errorMessage, "danger");
+  
+  // Hide loading screen and show error
+  setTimeout(() => {
+    const loadingScreen = document.getElementById('loadingScreen');
+    if (loadingScreen) {
+      loadingScreen.style.display = 'none';
+    }
+  }, 500);
 }
 
 // ✅ Enhanced Helper Functions

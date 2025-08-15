@@ -43,13 +43,8 @@ try {
     console.log("🚀 Production environment detected - all features enabled");
   }
   
-  // Hide loading screen after successful initialization
-  setTimeout(() => {
-    const loadingScreen = document.getElementById('loadingScreen');
-    if (loadingScreen) {
-      loadingScreen.style.display = 'none';
-    }
-  }, 500);
+  // Loading screen is handled by auth-middleware.js
+  console.log('✅ Firebase initialized successfully - loading screen handled by auth middleware');
   
 } catch (error) {
   console.error("❌ Firebase initialization error:", error);
@@ -67,13 +62,8 @@ try {
     : "Development database connection failed.";
   showToast(errorMessage, "danger");
   
-  // Hide loading screen and show error
-  setTimeout(() => {
-    const loadingScreen = document.getElementById('loadingScreen');
-    if (loadingScreen) {
-      loadingScreen.style.display = 'none';
-    }
-  }, 500);
+  // Loading screen is handled by auth-middleware.js
+  console.log('❌ Firebase initialization failed - loading screen handled by auth middleware');
 }
 
 // ✅ Enhanced Helper Functions

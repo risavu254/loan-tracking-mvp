@@ -23,8 +23,8 @@
     <script src="js/auth-cache.js"></script>
 </head>
 <body class="dark-theme">
-  <!-- Loading Screen (Hidden by default for faster loading) -->
-  <div id="loadingScreen" class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-dark" style="z-index: 9999; display: none;">
+  <!-- Loading Screen (Visible by default, hidden after authentication) -->
+  <div id="loadingScreen" class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-dark" style="z-index: 9999;">
     <div class="text-center">
       <div class="spinner-border text-primary mb-3" role="status">
         <span class="visually-hidden">Loading...</span>
@@ -59,6 +59,9 @@
     </button>
     <button id="forceHideBtn" title="Force Hide Loading" class="btn text-white" aria-label="Force hide loading screen" onclick="forceHideLoading()">
       <i class="bi bi-eye-slash fs-5" aria-hidden="true"></i>
+    </button>
+    <button id="testSessionBtn" title="Test Session" class="btn text-white" aria-label="Test session storage" onclick="testSession()">
+      <i class="bi bi-database fs-5" aria-hidden="true"></i>
     </button>
     <div id="notificationPanel" class="notif-panel shadow-lg border border-secondary rounded p-3 bg-dark d-none position-absolute end-0 mt-2" style="z-index: 1050;" role="region" aria-label="Notifications">
       <div class="d-flex justify-content-between align-items-center mb-2">
@@ -1141,6 +1144,24 @@
           console.log('✅ Loading screen hidden');
         } else {
           console.log('⚠️ Loading screen not found');
+        }
+      };
+      
+      // Function to test session storage
+      window.testSession = function() {
+        console.log('🧪 Testing session storage...');
+        console.log('🔑 dashboard_session:', sessionStorage.getItem('dashboard_session'));
+        console.log('⏰ auth_timestamp:', sessionStorage.getItem('auth_timestamp'));
+        console.log('📋 All session storage keys:', Object.keys(sessionStorage));
+        
+        const session = sessionStorage.getItem('dashboard_session');
+        if (session) {
+          try {
+            const user = JSON.parse(session);
+            console.log('✅ Session parsed successfully:', user);
+          } catch (error) {
+            console.error('❌ Error parsing session:', error);
+          }
         }
       };
       

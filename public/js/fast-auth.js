@@ -21,29 +21,7 @@ function quickSessionCheck() {
   return { valid: false };
 }
 
-// ✅ Optimized Dashboard Initialization
-function initializeDashboard() {
-  // Hide loading screen immediately
-  const loadingScreen = document.getElementById('loadingScreen');
-  if (loadingScreen) {
-    loadingScreen.style.display = 'none';
-  }
-  
-  // Show dashboard content immediately
-  const dashboardContent = document.querySelector('.dashboard-content');
-  if (dashboardContent) {
-    dashboardContent.style.display = 'block';
-  }
-}
-
 // ✅ Export for use in dashboard files
 window.fastAuth = {
-  quickSessionCheck,
-  initializeDashboard
-};
-
-// ✅ Auto-initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-  // Initialize dashboard immediately
-  initializeDashboard();
-}); 
+  quickSessionCheck
+}; 

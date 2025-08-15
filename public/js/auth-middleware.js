@@ -168,24 +168,18 @@ function protectRoute() {
     console.log('🛡️ protectRoute called - starting authentication check');
     
     try {
-      // Hide loading screen immediately - no authentication checking needed
-      const loadingScreen = document.getElementById('loadingScreen');
-      if (loadingScreen) {
-        console.log('📱 Hiding loading screen in protectRoute');
-        loadingScreen.style.display = 'none';
-      } else {
-        console.log('⚠️ Loading screen not found in protectRoute');
-      }
-
       // Quick session check first
       const session = sessionStorage.getItem(SESSION_KEY);
       const timestamp = sessionStorage.getItem(AUTH_TIMESTAMP);
       
       console.log('🔍 Checking session:', { session: !!session, timestamp: !!timestamp });
+      console.log('🔑 Session key:', SESSION_KEY);
+      console.log('⏰ Timestamp key:', AUTH_TIMESTAMP);
       
       if (session && timestamp) {
         const sessionAge = Date.now() - parseInt(timestamp);
         console.log('⏰ Session age:', sessionAge, 'ms');
+        console.log('⏰ Session duration limit:', SESSION_DURATION, 'ms');
         
         if (sessionAge < SESSION_DURATION) {
           // Valid session - proceed immediately
@@ -194,10 +188,19 @@ function protectRoute() {
             isAuthenticated = true;
             console.log('✅ Valid session found, user:', currentUser.email);
             console.log('✅ Authentication successful - resolving true');
+            
+            // Hide loading screen after successful authentication
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen) {
+              console.log('📱 Hiding loading screen after successful authentication');
+              loadingScreen.style.display = 'none';
+            }
+            
             resolve(true);
             return;
           } catch (error) {
             console.error('❌ Error parsing session:', error);
+            clearSession();
           }
         } else {
           console.log('⏰ Session expired, clearing...');
@@ -205,6 +208,7 @@ function protectRoute() {
         }
       } else {
         console.log('❌ No session found');
+        console.log('🔍 Available session storage keys:', Object.keys(sessionStorage));
       }
 
       // If no valid session, redirect to login immediately
@@ -288,15 +292,6 @@ window.logoutUser = logoutUser;
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('🚀 DOM Content Loaded - Starting authentication initialization');
   
-  // Hide loading screen immediately
-  const loadingScreen = document.getElementById('loadingScreen');
-  if (loadingScreen) {
-    console.log('📱 Loading screen found, hiding immediately');
-    loadingScreen.style.display = 'none';
-  } else {
-    console.log('⚠️ Loading screen not found');
-  }
-
   // Check if we're on a protected page
   const currentPage = window.location.pathname.split('/').pop();
   const protectedPages = ['dash3.html'];
@@ -363,10 +358,4 @@ if (!isLocalDev) {
   });
 }
 
-// ✅ Force hide loading screen after 2 seconds as fallback
-setTimeout(() => {
-  const loadingScreen = document.getElementById('loadingScreen');
-  if (loadingScreen) {
-    loadingScreen.style.display = 'none';
-  }
-}, 2000); 
+// ✅ Loading screen is now properly managed by the authentication flow 

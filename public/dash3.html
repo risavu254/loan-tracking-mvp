@@ -70,6 +70,9 @@
     <button id="testSessionBtn" title="Test Session" class="btn text-white" aria-label="Test session storage" onclick="testSession()">
       <i class="bi bi-database fs-5" aria-hidden="true"></i>
     </button>
+    <button id="debugLoadingBtn" title="Debug Loading" class="btn text-white" aria-label="Debug loading screen status" onclick="debugLoadingScreen()">
+      <i class="bi bi-question-circle fs-5" aria-hidden="true"></i>
+    </button>
     <div id="notificationPanel" class="notif-panel shadow-lg border border-secondary rounded p-3 bg-dark d-none position-absolute end-0 mt-2" style="z-index: 1050;" role="region" aria-label="Notifications">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <h6 class="fw-bold text-white mb-0">🔔 Notifications</h6>
@@ -1169,6 +1172,38 @@
           } catch (error) {
             console.error('❌ Error parsing session:', error);
           }
+        }
+      };
+      
+      // Function to debug loading screen
+      window.debugLoadingScreen = function() {
+        console.log('🔍 Debug Loading Screen Status:');
+        const loadingScreen = document.getElementById('loadingScreen');
+        if (loadingScreen) {
+          console.log('📱 Loading screen found:', {
+            display: loadingScreen.style.display,
+            classes: loadingScreen.className,
+            visible: loadingScreen.offsetParent !== null,
+            zIndex: loadingScreen.style.zIndex
+          });
+          
+          // Check if auth middleware is available
+          if (window.authMiddleware) {
+            console.log('✅ Auth middleware available');
+            if (window.authMiddleware.isUserAuthenticated) {
+              console.log('🔐 User authenticated:', window.authMiddleware.isUserAuthenticated());
+            }
+          } else {
+            console.log('❌ Auth middleware not available');
+          }
+          
+          // Try to hide it
+          if (window.forceHideLoadingScreen) {
+            const result = window.forceHideLoadingScreen();
+            console.log('🔧 Force hide result:', result);
+          }
+        } else {
+          console.log('❌ Loading screen not found');
         }
       };
       

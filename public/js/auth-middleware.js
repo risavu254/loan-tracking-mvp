@@ -282,7 +282,16 @@ window.authMiddleware = {
   isUserAuthenticated,
   setupInactivityLogout,
   setupSessionRefresh,
-  clearSession
+  clearSession,
+  hideLoadingScreen: () => {
+    const loadingScreen = document.getElementById('loadingScreen');
+    if (loadingScreen) {
+      console.log('📱 Hiding loading screen via auth middleware');
+      loadingScreen.style.display = 'none';
+      return true;
+    }
+    return false;
+  }
 };
 
 // ✅ Make logoutUser globally available for HTML onclick
@@ -307,6 +316,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       
       if (isProtected) {
         console.log('✅ Authentication successful, setting up dashboard...');
+        
+        // Force hide loading screen after successful authentication
+        setTimeout(() => {
+          const loadingScreen = document.getElementById('loadingScreen');
+          if (loadingScreen) {
+            console.log('📱 Force hiding loading screen after authentication success');
+            loadingScreen.style.display = 'none';
+          }
+        }, 100);
+        
         // Setup inactivity logout and session refresh
         setupInactivityLogout();
         setupSessionRefresh();

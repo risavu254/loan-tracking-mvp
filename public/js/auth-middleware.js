@@ -189,12 +189,7 @@ function protectRoute() {
             console.log('✅ Valid session found, user:', currentUser.email);
             console.log('✅ Authentication successful - resolving true');
             
-            // Hide loading screen after successful authentication
-            const loadingScreen = document.getElementById('loadingScreen');
-            if (loadingScreen) {
-              console.log('📱 Hiding loading screen after successful authentication');
-              loadingScreen.style.display = 'none';
-            }
+
             
             resolve(true);
             return;
@@ -284,12 +279,6 @@ window.authMiddleware = {
   setupSessionRefresh,
   clearSession,
   hideLoadingScreen: () => {
-    const loadingScreen = document.getElementById('loadingScreen');
-    if (loadingScreen) {
-      console.log('📱 Hiding loading screen via auth middleware');
-      loadingScreen.style.display = 'none';
-      return true;
-    }
     return false;
   }
 };
@@ -298,39 +287,27 @@ window.authMiddleware = {
 window.logoutUser = logoutUser;
 
 // ✅ Initialize authentication when DOM is ready
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
   console.log('🚀 DOM Content Loaded - Starting authentication initialization');
-  
-  // Check if we're on a protected page
   const currentPage = window.location.pathname.split('/').pop();
   const protectedPages = ['dash3.html'];
-  
   console.log('🔍 Current page:', currentPage);
   console.log('🛡️ Protected pages:', protectedPages);
-  
   if (protectedPages.includes(currentPage)) {
-    console.log('🛡️ Page is protected, checking authentication...');
-    try {
-      const isProtected = await protectRoute();
-      console.log('✅ Route protection result:', isProtected);
-      
-      if (isProtected) {
-        console.log('✅ Authentication successful, setting up dashboard...');
-        
-        // Force hide loading screen after successful authentication
-        setTimeout(() => {
-          const loadingScreen = document.getElementById('loadingScreen');
-          if (loadingScreen) {
-            console.log('📱 Force hiding loading screen after authentication success');
-            loadingScreen.style.display = 'none';
-          }
-        }, 100);
-        
-        // Setup inactivity logout and session refresh
+    console.log('🛡️ Page is protected, checking authentication via onAuthStateChanged...');
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        isAuthenticated = true;
+        currentUser = {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName || user.email,
+          photoURL: user.photoURL
+        };
+        sessionStorage.setItem(SESSION_KEY, JSON.stringify(currentUser));
+        sessionStorage.setItem(AUTH_TIMESTAMP, Date.now().toString());
         setupInactivityLogout();
         setupSessionRefresh();
-        
-        // Add logout button to dashboard if it exists
         const headerButtons = document.querySelector('.header-buttons');
         if (headerButtons && !document.getElementById('logoutBtn')) {
           const logoutBtn = document.createElement('button');
@@ -346,16 +323,14 @@ document.addEventListener('DOMContentLoaded', async () => {
           };
           headerButtons.appendChild(logoutBtn);
         }
-        
         console.log('✅ Dashboard setup complete');
       } else {
-        console.log('❌ Authentication failed, redirecting to login');
+        clearSession();
+        if (!window.location.pathname.includes('login.html')) {
+          window.location.href = 'login.html';
+        }
       }
-    } catch (error) {
-      console.error('❌ Authentication initialization error:', error);
-      // Fallback: redirect to login
-      window.location.href = 'login.html?message=init_error';
-    }
+    });
   } else {
     console.log('ℹ️ Page is not protected, no authentication needed');
   }

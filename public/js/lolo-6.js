@@ -66,16 +66,6 @@ try {
   console.log('❌ Firebase initialization failed - loading screen handled by auth middleware');
 }
 
-// ✅ Fallback loading screen management
-function ensureLoadingScreenHidden() {
-  const loadingScreen = document.getElementById('loadingScreen');
-  if (loadingScreen && loadingScreen.style.display !== 'none') {
-    console.log('📱 Fallback: Hiding loading screen from main script');
-    loadingScreen.style.display = 'none';
-    return true;
-  }
-  return false;
-}
 
 // ✅ Enhanced Helper Functions
 function safeToLocaleString(value) {
@@ -1931,29 +1921,4 @@ window.clearMobileDateFilter = function(filterId) {
   }
 };
 
-// ✅ Final fallback: Ensure loading screen is hidden and dashboard is initialized
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('🚀 Main dashboard script loaded - checking loading screen status');
-  
-  // Wait a bit for auth middleware to complete
-  setTimeout(() => {
-    if (ensureLoadingScreenHidden()) {
-      console.log('✅ Loading screen hidden by fallback mechanism');
-    }
-    
-    // Additional check: if loading screen is still visible after 3 seconds, force hide it
-    setTimeout(() => {
-      const loadingScreen = document.getElementById('loadingScreen');
-      if (loadingScreen && loadingScreen.style.display !== 'none') {
-        console.log('⚠️ Loading screen still visible after 3 seconds - forcing hide');
-        loadingScreen.style.display = 'none';
-        showToast('Dashboard loaded successfully', 'success');
-      }
-    }, 3000);
-  }, 1000);
-});
 
-// ✅ Global function to manually hide loading screen (for debugging)
-window.forceHideLoadingScreen = function() {
-  return ensureLoadingScreenHidden();
-};

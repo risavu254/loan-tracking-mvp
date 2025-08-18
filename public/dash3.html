@@ -30,16 +30,7 @@
     </script>
 </head>
 <body class="dark-theme">
-  <!-- Loading Screen (Visible by default, hidden after authentication) -->
-  <div id="loadingScreen" class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-dark" style="z-index: 9999;">
-    <div class="text-center">
-      <div class="spinner-border text-primary mb-3" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </div>
-      <div class="text-white">Loading dashboard...</div>
-    </div>
-  </div>
-
+  
   <!-- HEADER -->
 <header class="d-flex justify-content-between align-items-center px-4 py-3 bg-dark text-white sticky-top shadow" data-theme="dark" role="banner">
   <div class="logo d-flex align-items-center gap-2 fs-5 fw-bold" aria-label="Dashboard Logo">
@@ -64,15 +55,10 @@
     <button id="debugBtn" title="Debug Auth" class="btn text-white" aria-label="Debug authentication state" onclick="debugAuth()">
       <i class="bi bi-bug fs-5" aria-hidden="true"></i>
     </button>
-    <button id="forceHideBtn" title="Force Hide Loading" class="btn text-white" aria-label="Force hide loading screen" onclick="forceHideLoading()">
-      <i class="bi bi-eye-slash fs-5" aria-hidden="true"></i>
-    </button>
     <button id="testSessionBtn" title="Test Session" class="btn text-white" aria-label="Test session storage" onclick="testSession()">
       <i class="bi bi-database fs-5" aria-hidden="true"></i>
     </button>
-    <button id="debugLoadingBtn" title="Debug Loading" class="btn text-white" aria-label="Debug loading screen status" onclick="debugLoadingScreen()">
-      <i class="bi bi-question-circle fs-5" aria-hidden="true"></i>
-    </button>
+    
     <div id="notificationPanel" class="notif-panel shadow-lg border border-secondary rounded p-3 bg-dark d-none position-absolute end-0 mt-2" style="z-index: 1050;" role="region" aria-label="Notifications">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <h6 class="fw-bold text-white mb-0">🔔 Notifications</h6>
@@ -1089,12 +1075,7 @@
           console.log('✅ Auth middleware functions:', Object.keys(window.authMiddleware));
         }
         
-        // Check if loading screen is visible
-        const loadingScreen = document.getElementById('loadingScreen');
-        if (loadingScreen) {
-          console.log('📱 Loading screen display:', loadingScreen.style.display);
-          console.log('📱 Loading screen classes:', loadingScreen.className);
-        }
+        // Loading screen removed
         
         // Check if we're authenticated
         if (window.authMiddleware && window.authMiddleware.isUserAuthenticated) {
@@ -1145,17 +1126,7 @@
         }
       }
       
-      // Function to force hide loading screen
-      window.forceHideLoading = function() {
-        console.log('🔧 Force hiding loading screen...');
-        const loadingScreen = document.getElementById('loadingScreen');
-        if (loadingScreen) {
-          loadingScreen.style.display = 'none';
-          console.log('✅ Loading screen hidden');
-        } else {
-          console.log('⚠️ Loading screen not found');
-        }
-      };
+
       
       // Function to test session storage
       window.testSession = function() {
@@ -1175,37 +1146,7 @@
         }
       };
       
-      // Function to debug loading screen
-      window.debugLoadingScreen = function() {
-        console.log('🔍 Debug Loading Screen Status:');
-        const loadingScreen = document.getElementById('loadingScreen');
-        if (loadingScreen) {
-          console.log('📱 Loading screen found:', {
-            display: loadingScreen.style.display,
-            classes: loadingScreen.className,
-            visible: loadingScreen.offsetParent !== null,
-            zIndex: loadingScreen.style.zIndex
-          });
-          
-          // Check if auth middleware is available
-          if (window.authMiddleware) {
-            console.log('✅ Auth middleware available');
-            if (window.authMiddleware.isUserAuthenticated) {
-              console.log('🔐 User authenticated:', window.authMiddleware.isUserAuthenticated());
-            }
-          } else {
-            console.log('❌ Auth middleware not available');
-          }
-          
-          // Try to hide it
-          if (window.forceHideLoadingScreen) {
-            const result = window.forceHideLoadingScreen();
-            console.log('🔧 Force hide result:', result);
-          }
-        } else {
-          console.log('❌ Loading screen not found');
-        }
-      };
+
       
       // Initialize all modals
      /* const modals = ['disbursedModal', 'dueModal', 'arrearsModal'];

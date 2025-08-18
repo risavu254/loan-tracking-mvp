@@ -7,6 +7,10 @@
 # Redirect kamkoba-login to main login
 /kamkoba-login.html    /login.html   301
 
+# Security.txt accessibility (ensure both locations work)
+/security.txt    /.well-known/security.txt   200
+/.well-known/security.txt    /.well-known/security.txt   200
+
 # Security redirects
 /.env    /404.html   404
 /config.js    /404.html   404 

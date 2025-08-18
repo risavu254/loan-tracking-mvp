@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Policy - DigiMashinani Field Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <style>
+        body { padding: 20px; line-height: 1.6; }
+        .container { max-width: 900px; }
+        .security-badge { 
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .vulnerability-severity {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        .critical { background-color: #dc3545; color: white; }
+        .high { background-color: #fd7e14; color: white; }
+        .medium { background-color: #ffc107; color: black; }
+        .low { background-color: #28a745; color: white; }
+        .info { background-color: #17a2b8; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="security-badge">
+            🛡️ Security Policy
+        </div>
+        
+        <h1>Security Policy</h1>
+        <p><strong>DigiMashinani Field Tracker</strong> - Loan Management System by Risavu Tech</p>
+        <p><strong>Last updated:</strong> December 2024</p>
+        
+        <div class="alert alert-info">
+            <h4>🔒 Our Commitment to Security</h4>
+            <p>We take the security of our loan management system seriously. This policy outlines how to report security vulnerabilities and our response procedures.</p>
+        </div>
+
+        <h2>📋 Scope</h2>
+        <p>This security policy applies to:</p>
+        <ul>
+            <li><strong>Web Application:</strong> DigiMashinani Field Tracker (all versions)</li>
+            <li><strong>Domains:</strong> All services under *.loan-tracking-system-7c607.web.app</li>
+            <li><strong>Infrastructure:</strong> Firebase Hosting, Authentication, and Firestore</li>
+            <li><strong>Client Applications:</strong> Web browser-based access</li>
+        </ul>
+
+        <h2>🚨 Reporting Vulnerabilities</h2>
+        
+        <h3>Contact Information</h3>
+        <ul>
+            <li><strong>Email:</strong> <a href="mailto:risavutech@gmail.com">risavutech@gmail.com</a></li>
+            <li><strong>Response Time:</strong> 24-48 hours</li>
+            <li><strong>Languages:</strong> English</li>
+        </ul>
+
+        <h3>What to Include</h3>
+        <p>When reporting a vulnerability, please include:</p>
+        <ul>
+            <li>Detailed description of the vulnerability</li>
+            <li>Steps to reproduce the issue</li>
+            <li>Potential impact assessment</li>
+            <li>Screenshots or proof-of-concept (if applicable)</li>
+            <li>Your contact information for follow-up</li>
+        </ul>
+
+        <h2>🎯 Vulnerability Categories</h2>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h4>In Scope</h4>
+                <ul>
+                    <li>Authentication bypass</li>
+                    <li>Authorization flaws</li>
+                    <li>Data exposure/leakage</li>
+                    <li>Cross-site scripting (XSS)</li>
+                    <li>SQL injection</li>
+                    <li>Cross-site request forgery (CSRF)</li>
+                    <li>Server-side request forgery (SSRF)</li>
+                    <li>Business logic flaws</li>
+                    <li>Session management issues</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h4>Out of Scope</h4>
+                <ul>
+                    <li>Social engineering attacks</li>
+                    <li>Physical security issues</li>
+                    <li>Denial of service attacks</li>
+                    <li>Issues in third-party services</li>
+                    <li>Self-XSS vulnerabilities</li>
+                    <li>Missing security headers (low impact)</li>
+                    <li>Rate limiting issues</li>
+                    <li>Reports from automated scanners without manual verification</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2>⚡ Severity Classification</h2>
+        
+        <div class="mb-3">
+            <span class="vulnerability-severity critical">CRITICAL</span>
+            <strong>Complete system compromise</strong> - Authentication bypass, full data access
+        </div>
+        
+        <div class="mb-3">
+            <span class="vulnerability-severity high">HIGH</span>
+            <strong>Significant data exposure</strong> - User data access, privilege escalation
+        </div>
+        
+        <div class="mb-3">
+            <span class="vulnerability-severity medium">MEDIUM</span>
+            <strong>Limited impact</strong> - Information disclosure, business logic flaws
+        </div>
+        
+        <div class="mb-3">
+            <span class="vulnerability-severity low">LOW</span>
+            <strong>Minimal impact</strong> - Minor information leakage, configuration issues
+        </div>
+        
+        <div class="mb-3">
+            <span class="vulnerability-severity info">INFO</span>
+            <strong>No security impact</strong> - Best practices, recommendations
+        </div>
+
+        <h2>⏱️ Response Timeline</h2>
+        
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Severity</th>
+                        <th>Initial Response</th>
+                        <th>Investigation</th>
+                        <th>Resolution</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="vulnerability-severity critical">CRITICAL</span></td>
+                        <td>2 hours</td>
+                        <td>24 hours</td>
+                        <td>48 hours</td>
+                    </tr>
+                    <tr>
+                        <td><span class="vulnerability-severity high">HIGH</span></td>
+                        <td>24 hours</td>
+                        <td>72 hours</td>
+                        <td>1 week</td>
+                    </tr>
+                    <tr>
+                        <td><span class="vulnerability-severity medium">MEDIUM</span></td>
+                        <td>48 hours</td>
+                        <td>1 week</td>
+                        <td>2 weeks</td>
+                    </tr>
+                    <tr>
+                        <td><span class="vulnerability-severity low">LOW</span></td>
+                        <td>1 week</td>
+                        <td>2 weeks</td>
+                        <td>1 month</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2>🔐 Security Measures</h2>
+        
+        <h3>Current Protections</h3>
+        <ul>
+            <li><strong>Authentication:</strong> Firebase Authentication with email/password</li>
+            <li><strong>Session Management:</strong> 8-hour session timeout with inactivity logout</li>
+            <li><strong>Transport Security:</strong> HTTPS enforcement</li>
+            <li><strong>Content Security Policy:</strong> Configured to prevent XSS</li>
+            <li><strong>Domain Authorization:</strong> Restricted to authorized domains</li>
+            <li><strong>Input Validation:</strong> Client-side and server-side validation</li>
+            <li><strong>Error Handling:</strong> Secure error messages without information disclosure</li>
+        </ul>
+
+        <h3>Security Headers</h3>
+        <ul>
+            <li>X-Frame-Options: SAMEORIGIN</li>
+            <li>X-XSS-Protection: 1; mode=block</li>
+            <li>X-Content-Type-Options: nosniff</li>
+            <li>Referrer-Policy: strict-origin-when-cross-origin</li>
+            <li>Strict-Transport-Security: max-age=31536000</li>
+            <li>Permissions-Policy: geolocation=(), microphone=(), camera=()</li>
+        </ul>
+
+        <h2>📜 Responsible Disclosure</h2>
+        
+        <div class="alert alert-warning">
+            <h4>Please Follow Responsible Disclosure</h4>
+            <ul class="mb-0">
+                <li>Do not access or modify user data</li>
+                <li>Do not perform destructive testing</li>
+                <li>Do not share vulnerability details publicly until resolved</li>
+                <li>Do not use automated scanners without permission</li>
+                <li>Respect user privacy and data</li>
+            </ul>
+        </div>
+
+        <h2>🏆 Recognition</h2>
+        <p>We appreciate security researchers who help us maintain a secure platform. Researchers who report valid vulnerabilities may be recognized on our security acknowledgments page (with permission).</p>
+
+        <h2>📞 Contact</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Security Team</h4>
+                <ul>
+                    <li><strong>Email:</strong> risavutech@gmail.com</li>
+                    <li><strong>Response Time:</strong> 24-48 hours</li>
+                    <li><strong>PGP Key:</strong> <a href="/pgp-key.txt">Download</a></li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h4>General Support</h4>
+                <ul>
+                    <li><strong>Email:</strong> risavutech@gmail.com</li>
+                    <li><strong>Privacy:</strong> risavutech@gmail.com</li>
+                    <li><strong>Documentation:</strong> <a href="/privacy-policy.html">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <hr>
+        <div class="text-center">
+            <p class="text-muted">
+                <small>This security policy is subject to updates. Check back regularly for the latest version.</small><br>
+                <a href="dash3.html">← Back to Dashboard</a> | 
+                <a href="privacy-policy.html">Privacy Policy</a> | 
+                <a href="/.well-known/security.txt">security.txt</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html> 
